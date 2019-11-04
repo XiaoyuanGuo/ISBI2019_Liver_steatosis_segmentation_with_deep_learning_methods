@@ -47,14 +47,6 @@ import utils
 import model_bak as modellib
 import visualize
 
-# Directory to save logs and model checkpoints, if not provided
-# through the command line argument --logs
-#DEFAULT_LOGS_DIR = os.path.join(ROOT_DIR, "logs")
-
-# Results directory
-# Save submission files here
-#RESULTS_DIR = os.path.join(ROOT_DIR, "results/steatosis/")
-
 # The dataset doesn't have a standard train/val split, so I picked
 # a variety of images to surve as a validation set.
 VAL_IMAGE_IDS = [
@@ -481,7 +473,7 @@ if __name__ == '__main__':
     print ('model set up succeed')
     model.load_weights(weights_path, by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc","mrcnn_bbox", "mrcnn_mask"])
     print('model load weight succedd')
-    dataset_dir ='/labs/konglab/Xiaoyuan_Completed/Steatosis_All_in_One/data/'
+    dataset_dir ='./data/'
     subset = "stage1_train"
     train(model,dataset_dir,subset)
    
