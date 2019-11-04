@@ -32,7 +32,7 @@ import steatosis
 LOGS_DIR = os.path.join(ROOT_DIR, "logs")
 
 # Dataset directory
-DATASET_DIR = os.path.join("/labs/konglab/Xiaoyuan_Completed/Steatosis_All_in_One/data/", "GT_mask")
+DATASET_DIR = os.path.join("./data/", "GT_mask")
 print(DATASET_DIR)
 
 
@@ -79,11 +79,8 @@ dataset.load_steatosis(DATASET_DIR, "stage1_test")
 dataset.prepare()
 print("Images: {}\nClasses: {}".format(len(dataset.image_ids), dataset.class_names))
 
-#weights_path = '/labs/konglab/xiaoyuan/MyProject2s/Boundary-aware-maskrcnn-9-17-2018/logs/steatosis20180905T1705/mask_rcnn_steatosis_0040.h5'
-weights_path = '/labs/konglab/Steatosis_Seg_DP_xiaoyuan/logs/steatosis20180624T1732/mask_rcnn_steatosis_0060.h5'
-#weights_path = '/labs/konglab/xiaoyuan/MyProject_2/Mask_RCNN-xiaoyuan/logs/steatosis20180915T1542/mask_rcnn_steatosis_0050.h5'
-#weights_path = '/labs/konglab/xiaoyuan/MyProject2s/Mask_RCNN_ResNet50_Heads20/logs/steatosis20180906T0914/mask_rcnn_steatosis_0030.h5'
-#weights_path="/labs/konglab/xiaoyuan/MyProject2s/Mask_RCNN_ResNet101_Heads20/logs/steatosis20180905T0948/mask_rcnn_steatosis_0040.h5"
+
+weights_path = './mask_rcnn_steatosis_0060.h5'
 # Create model in inference mode
 with tf.device(DEVICE):
     model = modellib.MaskRCNN(mode="inference",
@@ -105,7 +102,6 @@ for image_id in range(0,len(dataset.image_ids)):
     results = model.detect_molded(np.expand_dims(image, 0), np.expand_dims(image_meta, 0), verbose=1)
     r = results[0]
     image_path= DATASET_DIR+"/stage1_test/"+dataset.image_reference(image_id)+"/masks"
-    #image_path= DATASET_DIR+"/stage1_test/"+dataset.image_reference(image_id)+"Masks"
     directory = os.path.dirname(image_path)
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -114,37 +110,22 @@ for image_id in range(0,len(dataset.image_ids)):
     invalid = 0
     N = len(r['class_ids'])
     colors =random_colors(N)
-    #colors = colors
+
     image_masked = image
     
     for c_id in r['class_ids']:     
-        #plt.imshow(image) 
+
         inx = inx + 1
         score = r['scores'][inx] 
-        #if score<0.9:
-        #    invalid = invalid +1
-        #    continue
-        #print(c_id)
-        #print(r['scores'][inx])
-        #pred_mask = r['masks'][:,:,inx]
-        #print(pred_mask)
+
         pred_mask = r['masks'][:, :, inx]
         
         print("pred_mask shape is {}".format(pred_mask.shape))
         pred_mask = np.array(pred_mask, dtype=np.uint8)
         color = colors[inx]
         for c in range(3):
-            image_masked[:, :, c] = np.where(pred_mask == 1,image[:, :, c] *(1 - alpha) + alpha * color[c] * 255,image[:, :, c])
-        #
-        #color = colors[inx]
-        #for c in range(3):            
-        #    image_masked[:, :, c] = np.where(pred_mask == 1,
-        #                          image[:, :, c] *
-        #                          (1 - alpha) + alpha * color[c] * 255,
-        #                          image[:, :, c])
     np.save(image_path+'{}.npy'.format(dataset.image_reference(image_id)),r['masks'])
     cv2.imwrite(image_path+'{}_mask_Res50_Boundary_Head20_30.png'.format(dataset.image_reference(image_id)),image_masked)
-    
-    #print(invalid )
+
 print("Finished!\n")
     
