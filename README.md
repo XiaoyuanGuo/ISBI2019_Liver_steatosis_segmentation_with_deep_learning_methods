@@ -1,1 +1,1 @@
-# ISBI2019_Liver_steatosis_segmentation_with_deep_learning_methods
+# ISBI2019 Liver steatosis segmentation with deep learning methods
